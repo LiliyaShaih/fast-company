@@ -5,102 +5,75 @@ const Users = () => {
   const [users, setUsers] = useState(api.users.fetchAll());
 
   const handleDelete = (userId) => {
-    setUsers((prevState) => prevState.filter((user) => user._id !== userId));
-  };
-
-  const getCorrectSuffix = (number) => {
-    if (number >= 12 && number <= 14) {
-      return '';
-    } else if (number % 10 === 2 || number % 10 === 3 || number % 10 === 4) {
-      return 'а';
-    } else {
-      return '';
-    }
+    setUsers(users.filter((user) => user._id !== userId));
   };
 
   const renderPhrase = (number) => {
-    if (number !== 0) {
-      return (
-        <h1 className="badge bg-primary" style={{ fontSize: '2.5em' }}>
-          {number} человек{getCorrectSuffix(number)} тусанет с тобой сегодня
-        </h1>
-      );
-    }
-    return (
-      <h1 className="badge bg-danger" style={{ fontSize: '2.5em' }}>
-        Никто с тобой не тусанет
-      </h1>
-    );
+    const lastOne = Number(number.toString().slice(-1));
+    if (number > 4 && number < 15) return 'человек тусанет';
+    if ([2, 3, 4].indexOf(lastOne) >= 0) return 'человека тусанут';
+    if (lastOne === 1) return 'человек тусанет';
+    return 'человек тусанет';
   };
 
-  const getBageClasses = (quality) => {
-    let classes = 'badge bg-';
-    classes += quality.color;
-    return classes;
-  };
-
-  const renderBadges = (qualities) => {
-    return qualities.map((quality) => {
-      return (
+  return (
+    <>
+      <h2>
         <span
-          className={getBageClasses(quality)}
-          key={quality._id}
-          style={{ marginRight: '10px' }}
+          className={'badge ' + (users.length > 0 ? 'bg-primary' : 'bg-danger')}
         >
-          {quality.name}
+          {users.length > 0
+            ? `${
+                users.length + ' ' + renderPhrase(users.length)
+              } с тобой сегодня`
+            : 'Никто с тобой не тусанет'}
         </span>
-      );
-    });
-  };
+      </h2>
 
-  const renderUsersInfo = () => {
-    return users.map((user) => {
-      const { name, profession, qualities, completedMeetings, rate, _id } =
-        user;
-      const professionName = profession.name;
-
-      return (
-        <tr key={_id}>
-          <td>{name}</td>
-          <td>{renderBadges(qualities)}</td>
-          <td>{professionName}</td>
-          <td>{completedMeetings}</td>
-          <td>{rate}/5</td>
-          <td>
-            <button
-              className="btn btn-danger"
-              onClick={() => handleDelete(_id)}
-            >
-              delete
-            </button>
-          </td>
-        </tr>
-      );
-    });
-  };
-
-  if (users.length !== 0) {
-    return (
-      <>
-        {renderPhrase(users.length)}
+      {users.length > 0 && (
         <table className="table">
           <thead>
             <tr>
               <th scope="col">Имя</th>
               <th scope="col">Качества</th>
               <th scope="col">Профессия</th>
-              <th scope="col">Встретился,раз</th>
+              <th scope="col">Встретился, раз</th>
               <th scope="col">Оценка</th>
-              <th scope="col"></th>
+              <th />
             </tr>
           </thead>
-          <tbody>{renderUsersInfo()}</tbody>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user._id}>
+                <td>{user.name}</td>
+                <td>
+                  {user.qualities.map((item) => (
+                    <span
+                      className={'badge m-1 bg-' + item.color}
+                      key={item._id}
+                    >
+                      {item.name}
+                    </span>
+                  ))}
+                </td>
+                <td>{user.profession.name}</td>
+                <td>{user.completedMeetings}</td>
+                <td>{user.rate} /5</td>
+                <td>
+                  <button
+                    onClick={() => handleDelete(user._id)}
+                    className="btn btn-danger"
+                  >
+                    delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
-      </>
-    );
-  }
-
-  return renderPhrase(0);
+      )}
+    </>
+  );
 };
 
 export default Users;
