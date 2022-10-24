@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/fast-company/static/css/main.28cb4b2c.css",
-    "main.js": "/fast-company/static/js/main.fa86eefa.js",
+    "main.js": "/fast-company/static/js/main.94f6d48b.js",
     "static/js/787.4d212c3f.chunk.js": "/fast-company/static/js/787.4d212c3f.chunk.js",
     "index.html": "/fast-company/index.html",
     "main.28cb4b2c.css.map": "/fast-company/static/css/main.28cb4b2c.css.map",
-    "main.fa86eefa.js.map": "/fast-company/static/js/main.fa86eefa.js.map",
+    "main.94f6d48b.js.map": "/fast-company/static/js/main.94f6d48b.js.map",
     "787.4d212c3f.chunk.js.map": "/fast-company/static/js/787.4d212c3f.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.28cb4b2c.css",
-    "static/js/main.fa86eefa.js"
+    "static/js/main.94f6d48b.js"
   ]
 }
