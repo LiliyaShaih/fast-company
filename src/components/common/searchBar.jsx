@@ -1,14 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const SearchBar = ({ search, onChange }) => {
+const SearchBar = ({ searchQuery, onChange }) => {
     return (
         <form>
             <input
                 className="w-100"
                 type="text"
                 placeholder="Search..."
-                value={search}
+                name="searchQuery"
+                value={searchQuery}
                 onChange={onChange}
             />
         </form>
@@ -16,7 +17,7 @@ const SearchBar = ({ search, onChange }) => {
 };
 
 SearchBar.propTypes = {
-    search: PropTypes.string,
+    searchQuery: PropTypes.string,
     onChange: PropTypes.func
 };
 
