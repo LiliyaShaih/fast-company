@@ -11,12 +11,21 @@ const MultiSelectField = ({ options, onChange, name, label, defaultValue }) => {
     const handleChange = (value) => {
         onChange({ name: name, value });
     };
+    console.log(defaultValue);
+
     return (
         <div className="mb-4">
             <label className="form-label">{label}</label>
             <Select
                 isMulti
                 closeMenuOnSelect={false}
+                // defaultValue={[
+                //     {
+                //         label: "Странный",
+                //         value: "67rdca3eeb7f6fgeed471100"
+                //     },
+                //     { label: "Неуверенный", value: "67rdca3eeb7f6fgeed471103" }
+                // ]}
                 defaultValue={defaultValue}
                 options={optionsArray}
                 className="basic-multi-select"

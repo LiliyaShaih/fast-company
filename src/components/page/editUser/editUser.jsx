@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import api from "../../../api";
 import TextField from "../../common/form/textField";
 import SelectField from "../../common/form/selectField";
 import RadioField from "../../common/form/radioField";
 import MultiSelectField from "../../common/form/multiSelectField";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 
 const EditUser = ({ userId }) => {
+    const history = useHistory();
     const [user, setUser] = useState({
         email: "",
         name: "",
@@ -20,17 +21,16 @@ const EditUser = ({ userId }) => {
     const [qualities, setQualities] = useState([]);
 
     useEffect(() => {
-        api.users.getById(userId).then((data) => {
-            const qualitiesList = data.qualities.map((quality) => ({
-                value: quality._id,
-                label: quality.name,
-                color: quality.color
-            }));
-            console.log(data);
+        api.users.getById(userId).then((user) => {
+            const qualitiesUser = [];
+            user.qualities.forEach((quality) =>
+                qualitiesUser.push({ label: quality.name, value: quality._id })
+            );
+
             setUser({
-                ...data,
-                profession: data.profession._id,
-                qualitiesList
+                ...user,
+                profession: user.profession._id,
+                qualities: qualitiesUser
             });
         });
         api.professions.fetchAll().then((data) => {
@@ -50,50 +50,53 @@ const EditUser = ({ userId }) => {
         });
     }, []);
 
+    const getProfessionById = (id) => {
+        for (const prof of professions) {
+            if (prof.value === id) {
+                return { _id: prof.value, name: prof.label };
+            }
+        }
+    };
+
+    const getQualities = (elements) => {
+        const qualitiesArray = [];
+        for (const elem of elements) {
+            for (const quality in qualities) {
+                if (elem.value === qualities[quality].value) {
+                    qualitiesArray.push({
+                        _id: qualities[quality].value,
+                        name: qualities[quality].label,
+                        color: qualities[quality].color
+                    });
+                }
+            }
+        }
+        return qualitiesArray;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        const index = professions.findIndex(
-            (profession) => profession.value === user.profession
-        );
 
-        setUser((prevState) => ({
-            ...prevState,
-            profession: {
-                _id: user.profession,
-                name: professions[index].label
-            }
-        }));
+        const { profession, qualities } = user;
 
-        api.users.update(userId, user).then((user) => {
-            console.log(user);
-        });
+        api.users
+            .update(userId, {
+                ...user,
+                profession: getProfessionById(profession),
+                qualities: getQualities(qualities)
+            })
+            .then((data) => history.push(`/users/${data._id}`));
     };
 
     const handleChange = (target) => {
-        // if (target.name === "profession") {
-        //     const professionIndex = professions.findIndex(
-        //         (u) => u.value === target.value
-        //     );
-
-        //     setUser((prevState) => ({
-        //         ...prevState,
-        //         profession: {
-        //             _id: target.value,
-        //             name: professions[professionIndex].label
-        //         }
-        //     }));
-        //     return;
-        // }
         setUser((prevState) => ({
             ...prevState,
             [target.name]: target.value
         }));
-        console.log(user);
     };
 
     if (user && professions) {
-        console.log(user);
-
+        console.log(user.qualities);
         return (
             <div className="container mt-5">
                 <div className="row">
@@ -132,7 +135,7 @@ const EditUser = ({ userId }) => {
                             />
                             <MultiSelectField
                                 options={qualities}
-                                defaultValue={user.qualitiesList}
+                                defaultValue={user.qualities}
                                 name="qualities"
                                 label={"Выберите ваши качества"}
                                 onChange={handleChange}
@@ -141,7 +144,7 @@ const EditUser = ({ userId }) => {
                                 className="btn btn-primary w-100 mx-auto"
                                 type="submit"
                             >
-                                <Link to={`/users/${userId}`}> Обновить</Link>
+                                Обновить
                             </button>
                         </form>
                     </div>
