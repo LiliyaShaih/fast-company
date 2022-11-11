@@ -14,7 +14,6 @@ const UserPage = ({ userId }) => {
         history.push(`${id}/edit`);
     };
     if (user) {
-        console.log(user);
         return (
             <>
                 <div>

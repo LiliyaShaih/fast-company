@@ -19,8 +19,10 @@ const EditUser = ({ userId }) => {
 
     const [professions, setProfession] = useState([]);
     const [qualities, setQualities] = useState([]);
+    const [isLoading, setIsLoading] = useState();
 
     useEffect(() => {
+        setIsLoading(true);
         api.users.getById(userId).then((user) => {
             const qualitiesUser = [];
             user.qualities.forEach((quality) =>
@@ -32,6 +34,7 @@ const EditUser = ({ userId }) => {
                 profession: user.profession._id,
                 qualities: qualitiesUser
             });
+            setIsLoading(false);
         });
         api.professions.fetchAll().then((data) => {
             const professionsList = Object.keys(data).map((professionName) => ({
@@ -95,8 +98,7 @@ const EditUser = ({ userId }) => {
         }));
     };
 
-    if (user && professions) {
-        console.log(user.qualities);
+    if (professions && !isLoading) {
         return (
             <div className="container mt-5">
                 <div className="row">
